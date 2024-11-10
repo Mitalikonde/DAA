@@ -1,3 +1,5 @@
+#  Design n-Queens matrix having first Queen placed. Use backtracking to place remaining Queens to generate the final n-queen’s matrix
+
 class Item:
     def __init__(self, value, weight):
         self.value = value
