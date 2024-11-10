@@ -1,23 +1,35 @@
+# Non recursive function for fibonacci series.
 
-# Write a program non-recursive and recursive program to calculate Fibonacci numbers and analyze their time and space complexity.
-
-
-def fibonacci(n):
-    if n <= 0:
-        return 0, 0
+def fibonacci_non_recursive(n):
+    # Time Complexity: O(n)
+    # Space Complexity: O(1)
+    if n == 0:
+        return 0
     elif n == 1:
-        return 1, 1
-    elif n == 2:
-        return 1, 2
+        return 1
+    
+    a,b = 0,1
+    for _ in range(2, n+1):
+        a,b = b, a+b
+    return b
 
-    steps = 2  # Steps start at 2 because we already have the first two terms
-    a, b = 1, 1
-    for _ in range(2, n):
-        a, b = b, a + b
-        steps += 1
+# Test
+n = 10
+print(f"Fibonacci number at position {n} is: {fibonacci_non_recursive(n)}")
 
-    return b, steps
+# Recursive function for fibonacci numbers
 
-n = int(input("Enter the position in Fibonacci sequence: "))
-fib_number, step_count = fibonacci(n)
-print(f"Fibonacci number at position {n} is {fib_number} with {step_count} steps.")
+def fibonacci_recursive(n):
+    # Time Complexity: O(2^n)
+    # Space Complexity: O(n)
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci_recursive(n-1) + fibonacci_recursive(n-2)
+    
+    
+# Test
+n = 10
+print(f"Fibonacci number at position {n} is: {fibonacci_recursive(n)}")
