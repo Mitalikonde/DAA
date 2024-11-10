@@ -1,43 +1,60 @@
-class Job:
-    def __init__(self, id, deadline, profit):
-        self.id = id
-        self.deadline = deadline
-        self.profit = profit
+import heapq
 
-def job_sequencing(jobs):
-    # Sort jobs based on profit in descending order
-    jobs.sort(key=lambda x: x.profit, reverse=True)
-    max_deadline = max(job.deadline for job in jobs)
+class Node: 
+    def __init__(self, freq, symbol, left=None, right=None): 
+        self.freq = freq  # Frequency of symbol
+        self.symbol = symbol  # Symbol name (character)
+        self.left = left  # Left child
+        self.right = right  # Right child
+        self.huff = ''  # Tree direction (0/1)
 
-    # Initialize result array and tracking variables
-    result = [None] * max_deadline
-    job_count = 0
-    total_profit = 0
+    def __lt__(self, nxt): 
+        return self.freq < nxt.freq 
 
-    # Iterate through sorted jobs
-    for job in jobs:
-        # Find a free slot for this job, starting from the last possible slot
-        for j in range(min(max_deadline, job.deadline) - 1, -1, -1):
-            if result[j] is None:
-                result[j] = job.id
-                job_count += 1
-                total_profit += job.profit
-                break
+# Utility function to print Huffman codes for all symbols
+def printNodes(node, val=''): 
+    newVal = val + str(node.huff)  # Huffman code for current node
 
-    # Print the scheduled jobs and the total profit
-    print("Scheduled Jobs:", [job for job in result if job is not None])
-    print("Total Profit:", total_profit)
+    if node.left:
+        printNodes(node.left, newVal) 
+    if node.right:
+        printNodes(node.right, newVal) 
 
-# Input number of jobs
-n = int(input("Enter the number of jobs: "))
-jobs = []
+    # Display Huffman code if node is a leaf node
+    if not node.left and not node.right: 
+        print(f"{node.symbol} -> {newVal}") 
 
-# Input job details
-for i in range(n):
-    id = input("Enter job ID: ")
-    deadline = int(input(f"Enter deadline for job {id}: "))
-    profit = int(input(f"Enter profit for job {id}: "))
-    jobs.append(Job(id, deadline, profit))
+# Main function to build the Huffman Tree and print codes
+def huffmanCoding(chars, freq):
+    nodes = []
 
-# Perform job sequencing
-job_sequencing(jobs)
+    # Create nodes for each character and frequency pair
+    for x in range(len(chars)):
+        heapq.heappush(nodes, Node(freq[x], chars[x])) 
+
+    while len(nodes) > 1: 
+        # Get the two nodes with the lowest frequency
+        left = heapq.heappop(nodes) 
+        right = heapq.heappop(nodes) 
+
+        # Assign directional values
+        left.huff = 0
+        right.huff = 1
+
+        # Create a new parent node by combining two nodes
+        newNode = Node(left.freq + right.freq, left.symbol + right.symbol, left, right) 
+        heapq.heappush(nodes, newNode) 
+
+    # Print the Huffman codes
+    printNodes(nodes[0]) 
+
+# Taking user input
+chars = list(input("Enter the characters (e.g., abcdef): "))
+freq = list(map(int, input("Enter the frequencies separated by space: ").split()))
+
+# Validate input
+if len(chars) != len(freq):
+    print("Error: The number of characters must match the number of frequencies.")
+else:
+    # Build Huffman Tree and print codes
+    huffmanCoding(chars, freq)
