@@ -1,50 +1,78 @@
-def is_safe(board, row, col):
-    # Check this row on the left side
-    for i in range(col):
-        if board[row][i] == 1:
+# Utility function to check if it's safe to place a queen at board[row][col]
+def is_safe(board, row, col, n):
+    # Check the column on the left side
+    for i in range(row):
+        if board[i][col] == 1:
             return False
 
-    # Check upper diagonal on the left side
+    # Check the upper left diagonal
     for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
         if board[i][j] == 1:
             return False
 
-    # Check lower diagonal on the left side
-    for i, j in zip(range(row, len(board)), range(col, -1, -1)):
+    # Check the upper right diagonal
+    for i, j in zip(range(row, -1, -1), range(col, n)):
         if board[i][j] == 1:
             return False
 
     return True
 
-def solve_n_queens(board, col):
-    # If all queens are placed, return True
-    if col >= len(board):
+# Utility function to solve n-Queens problem using backtracking
+def solve_n_queens(board, row, n):
+    # Base case: If all queens are placed, return True
+    if row >= n:
         return True
 
-    # Try placing a queen in each row of the current column
-    for i in range(len(board)):
-        if is_safe(board, i, col):
-            board[i][col] = 1  # Place queen
+    # Try placing the queen in each column of the current row
+    for col in range(n):
+        if is_safe(board, row, col, n):
+            # Place the queen
+            board[row][col] = 1
 
-            # Recur to place the rest of the queens
-            if solve_n_queens(board, col + 1):
+            # Recursively place the rest of the queens
+            if solve_n_queens(board, row + 1, n):
                 return True
 
-            board[i][col] = 0  # Backtrack if placing queen didn't work
+            # If placing queen at board[row][col] doesn't lead to a solution, backtrack
+            board[row][col] = 0
 
+    # If the queen cannot be placed in any column in this row, return False
     return False
 
+# Function to initialize the board and place the first queen
+def n_queens_with_first_queen_placed(n, first_queen_row, first_queen_col):
+    # Initialize the board with all 0s
+    board = [[0 for _ in range(n)] for _ in range(n)]
+
+    # Place the first queen at the given position
+    board[first_queen_row][first_queen_col] = 1
+
+    # Solve the rest of the n-Queens problem starting from the next row
+    if solve_n_queens(board, first_queen_row + 1, n):
+        return board
+    else:
+        return None  # No solution found
+
+# Function to print the board
 def print_board(board):
-    for row in board:
-        print(" ".join("Q" if x == 1 else "." for x in row))
+    if board is None:
+        print("No solution exists!")
+    else:
+        for row in board:
+            print(" ".join(str(cell) for cell in row))
 
-# Set board size
-n = 8
-board = [[0] * n for _ in range(n)]
-board[0][0] = 1  # Place the first Queen
+# Example usage
+n = 8  # Size of the chessboard (n x n)
+first_queen_row = 0  # Row index of the first queen
+first_queen_col = 0  # Column index of the first queen
 
-# Start placing the remaining queens
-if solve_n_queens(board, 1):
-    print_board(board)
-else:
-    print("No solution exists")
+# Solve the n-Queens problem with the first queen placed
+solution = n_queens_with_first_queen_placed(n, first_queen_row, first_queen_col)
+
+# Print the solution
+print_board(solution)
+
+'''
+Time complexity : O(n!)
+Space complexity : O(n^2)
+'''
