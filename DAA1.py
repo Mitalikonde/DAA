@@ -1,54 +1,34 @@
-def fibonacci_iter(n):
-    if n < 0:
-        return -1, 1, 0  # Invalid input
-    if n == 0:
-        return 0, 1, 0  # F(0) = 0, sum = 0
-    if n == 1:
-        return 1, 1, 1  # F(1) = 1, sum = 1
+# Non-Recursive (Iterative) Fibonacci with iteration count
+def fibonacci_non_recursive(n, counter=0):
+    if n <= 0:
+        return 0, counter
+    elif n == 1:
+        return 1, counter
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        counter += 1
+        a, b = b, a + b
+    return b, counter
 
-    steps = 0
-    a = 0
-    b = 1
-    fib_sum = a + b  # Initialize the sum with F(0) + F(1)
-    for i in range(2, n + 1):
-        c = a + b
-        fib_sum += c  # Add current Fibonacci number to the sum
-        a=b
-        b=c
-        steps += 1
-    return c, steps + 1, fib_sum
+# Recursive Fibonacci with call count
+def fibonacci_recursive(n, counter=0):
+    counter += 1
+    if n <= 0:
+        return 0, counter
+    elif n == 1:
+        return 1, counter
+    fib1, counter = fibonacci_recursive(n - 1, counter)
+    fib2, counter = fibonacci_recursive(n - 2, counter)
+    return fib1 + fib2, counter
 
-def fibonacci_recur(n):
-    if n < 0:
-        return -1, 1, 0  # Invalid input
-    if n == 0:
-        return 0, 1, 0  # F(0) = 0, sum = 0
-    if n == 1:
-        return 1, 1, 1  # F(1) = 1, sum = 1
+n = int(input("Enter a number: "))
 
-    # Recursive call for Fibonacci calculation and steps
-    fib1, steps1, sum1 = fibonacci_recur(n - 1)
-    fib2, steps2, sum2 = fibonacci_recur(n - 2)
-   
-    # Current Fibonacci number
-    fib_n = fib1 + fib2
-    total_steps = steps1 + steps2 + 1
-   
-    # Sum of all Fibonacci numbers up to n
-    fib_sum = sum1 + fib2 + fib_n
-   
-    return fib_n, total_steps, fib_sum
+# Non-Recursive Fibonacci
+fib_non_recursive, non_recursive_counter = fibonacci_non_recursive(n)
+print("Fibonacci of", n, "(Non-Recursive):", fib_non_recursive)
+print("Non-Recursive Iterations:", non_recursive_counter)
 
-# Main program
-if _name_ == '_main_':
-    n = int(input("Enter a number: "))
-    iter_result, iter_steps, iter_sum = fibonacci_iter(n)
-    recur_result, recur_steps, recur_sum = fibonacci_recur(n)
-
-    print("Iterative Fibonacci:", iter_result)
-    print("Iterative Steps:", iter_steps)
-    print("Iterative Sum:", iter_sum)
-
-    print("Recursive Fibonacci:", recur_result)
-    print("Recursive Steps:", recur_steps)
-    print("Recursive Sum:", recur_sum)
+# Recursive Fibonacci
+fib_recursive, recursive_counter = fibonacci_recursive(n)
+print("Fibonacci of", n, "(Recursive):", fib_recursive)
+print("Recursive Function Calls:", recursive_counter)
