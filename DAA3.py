@@ -1,107 +1,66 @@
-# Write a program to solve a fractional Knapsack problem using a greedy method
-
-class Weights:
-    def __init__(self, weight, profit):
-        self.weight = weight
+# Structure for an item which stores weight and value
+class Item:
+    def __init__(self, profit, weight):
         self.profit = profit
-        self.pw_ratio = profit / weight
+        self.weight = weight
 
+# Main greedy function to solve fractional knapsack problem
+def fractionalKnapsack(W, arr):
+    
+    # Sort items based on the profit-to-weight ratio in descending order
+    arr.sort(key=lambda x: (x.profit / x.weight), reverse=True)
 
-def print_weights(arr):
-    print("-----------")
-    print(" W  P  P/W")
-    for w in arr:
-        print(w.weight, w.profit, round(w.pw_ratio, 2))
-    print("-----------")
+    # Result (total value in the Knapsack)
+    final_value = 0.0
 
-
-def cmp(item):
-    return item.pw_ratio
-
-
-def f_knapsack(arr, capacity):
-    arr.sort(key=cmp, reverse=True)
-    remaining_capacity = capacity
-    total_profit = 0
-
-    for w in arr:
-        print("Selected -> Weight:", w.weight, "Profit:", w.profit, "P/W Ratio:", round(w.pw_ratio, 2))
-        if w.weight <= remaining_capacity:
-            remaining_capacity -= w.weight
-            total_profit += w.profit
+    # Loop through all items
+    for item in arr:
+        
+        # If adding the item won't overflow, add it completely
+        if item.weight <= W:
+            W -= item.weight
+            final_value += item.profit
+            
+        # If we can't add the full item, add fractional part of it
         else:
-            total_profit += w.pw_ratio * remaining_capacity
-            remaining_capacity = 0
+            final_value += item.profit * W / item.weight
             break
-        print("Capacity Remaining:", remaining_capacity, "Profit:", total_profit)
+    
+    # Returning final value
+    return final_value
 
-    return total_profit
+# Driver Code
+if __name__ == "__main__":
+    
+    # Taking user input for knapsack capacity
+    W = int(input("Enter the maximum weight of the knapsack: "))
 
+    # Taking user input for number of items
+    n = int(input("Enter the number of items: "))
 
-def main():
-    n = int(input("Enter Number of Weights: "))
+    # Creating an empty list to store items
     arr = []
-
     for i in range(n):
-        weight = int(input("Enter Weight " + str(i + 1) + ": "))
-        profit = int(input("Enter Profit " + str(i + 1) + ": "))
-        arr.append(Weights(weight, profit))
+        profit = float(input(f"Enter profit for item {i+1}: "))
+        weight = float(input(f"Enter weight for item {i+1}: "))
+        arr.append(Item(profit, weight))
 
-    print()
-    print_weights(arr)
-
-    capacity = int(input("Enter Capacity: "))
-    print()
-
-    max_profit = f_knapsack(arr, capacity)
-    print("Maximum Profit:", max_profit)
+    # Function call
+    max_val = fractionalKnapsack(W, arr)
+    print(f"Maximum value in the knapsack: {max_val}")
 
 
-if __name__ == "__main__":
-    main()
+Output:
 
- # Write a program to solve a 0-1 Knapsack problem using dynamic programming or branch and bound strategy.
-def knapsack_01(weights, profits, n, m, dp):
-    # Base case: no items left
-    if n < 0:
-        return 0
+Enter the maximum weight of the knapsack: 50
+Enter the number of items: 3
+Enter profit for item 1: 60
+Enter weight for item 1: 10
+Enter profit for item 2: 100
+Enter weight for item 2: 20
+Enter profit for item 3: 120
+Enter weight for item 3: 30
+Maximum value in the knapsack: 240.0
 
-    # If already calculated, return the stored value
-    if dp[n][m] != -1:
-        return dp[n][m]
-
-    # If the current item's weight exceeds the remaining capacity, skip it
-    if weights[n] > m:
-        dp[n][m] = knapsack_01(weights, profits, n - 1, m, dp)
-    else:
-        # Choose the maximum of either including or excluding the current item
-        include = knapsack_01(weights, profits, n - 1, m - weights[n], dp) + profits[n]
-        exclude = knapsack_01(weights, profits, n - 1, m, dp)
-        dp[n][m] = max(include, exclude)
-
-    return dp[n][m]
-
-def main():
-    weights = []
-    profits = []
-
-    # Input number of items and capacity of the sack
-    n = int(input("Enter number of items: "))
-    m = int(input("Enter capacity of sack: "))
-
-    # Input the weights and profits of the items
-    for i in range(n):
-        weight = int(input("Enter weight " + str(i + 1) + ": "))
-        profit = int(input("Enter profit " + str(i + 1) + ": "))
-        weights.append(weight)
-        profits.append(profit)
-
-    # Initialize DP table with -1
-    dp = [[-1 for _ in range(m + 1)] for _ in range(n)]
-
-    # Get the maximum profit
-    max_profit = knapsack_01(weights, profits, n - 1, m, dp)
-    print("Maximum Profit:", max_profit)
-
-if __name__ == "__main__":
-    main()
+Time Complexity:O(nlogn)
+Space Complexity:O(n)
