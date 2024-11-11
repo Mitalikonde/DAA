@@ -1,45 +1,63 @@
 # Write a program to solve a 0-1 Knapsack problem using dynamic programming or branch and bound strategy.
-def knapsack_01(weights, profits, n, m, dp):
-    # Base case: no items left
-    if n < 0:
+
+
+# Memoization approach for 0/1 Knapsack in Python
+
+def knapsack(wt, val, W, n, t):
+    
+    # Base conditions
+    if n == 0 or W == 0:
         return 0
+    if t[n][W] != -1:
+        return t[n][W]
 
-    # If already calculated, return the stored value
-    if dp[n][m] != -1:
-        return dp[n][m]
-
-    # If the current item's weight exceeds the remaining capacity, skip it
-    if weights[n] > m:
-        dp[n][m] = knapsack_01(weights, profits, n - 1, m, dp)
+    # Choice diagram code
+    if wt[n-1] <= W:
+        t[n][W] = max(
+            val[n-1] + knapsack(wt, val, W - wt[n-1], n - 1, t),
+            knapsack(wt, val, W, n - 1, t)
+        )
     else:
-        # Choose the maximum of either including or excluding the current item
-        include = knapsack_01(weights, profits, n - 1, m - weights[n], dp) + profits[n]
-        exclude = knapsack_01(weights, profits, n - 1, m, dp)
-        dp[n][m] = max(include, exclude)
+        t[n][W] = knapsack(wt, val, W, n - 1, t)
 
-    return dp[n][m]
+    return t[n][W]
 
-def main():
-    weights = []
-    profits = []
+# Driver code
+if __name__ == '__main__':
+    
+    # Taking user input for knapsack capacity
+    W = int(input("Enter the maximum weight of the knapsack: "))
+    
+    # Taking user input for number of items
+    n = int(input("Enter the number of items: "))
 
-    # Input number of items and capacity of the sack
-    n = int(input("Enter number of items: "))
-    m = int(input("Enter capacity of sack: "))
-
-    # Input the weights and profits of the items
+    # Taking user input for profits and weights
+    profit = []
+    weight = []
     for i in range(n):
-        weight = int(input("Enter weight " + str(i + 1) + ": "))
-        profit = int(input("Enter profit " + str(i + 1) + ": "))
-        weights.append(weight)
-        profits.append(profit)
+        p = int(input(f"Enter profit for item {i+1}: "))
+        w = int(input(f"Enter weight for item {i+1}: "))
+        profit.append(p)
+        weight.append(w)
 
-    # Initialize DP table with -1
-    dp = [[-1 for _ in range(m + 1)] for _ in range(n)]
+    # Initialize the memoization matrix with -1
+    t = [[-1 for i in range(W + 1)] for j in range(n + 1)]
 
-    # Get the maximum profit
-    max_profit = knapsack_01(weights, profits, n - 1, m, dp)
-    print("Maximum Profit:", max_profit)
+    # Function call
+    max_profit = knapsack(weight, profit, W, n, t)
+    print(f"Maximum profit in the knapsack: {max_profit}")
 
-if __name__ == "__main__":
-    main()
+# Output:
+
+# Enter the number of items: 3
+# Enter profit for item 1: 1
+# Enter weight for item 1: 4
+# Enter profit for item 2: 2
+# Enter weight for item 2: 5
+# Enter profit for item 3: 3
+# Enter weight for item 3: 1
+# Enter the maximum weight of the knapsack: 4
+# Maximum profit in the knapsack: 3
+
+# Time Complexity:O(n×W)
+# Space Complexity:O(n×W)
