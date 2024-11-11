@@ -58,3 +58,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Output:
+
+# Enter the text for Huffman encoding: sania
+# Character frequencies:
+# s : 1
+# a : 2
+# n : 1
+# i : 1
+
+# Huffman Codes:
+# s : 00
+# n : 01
+# i : 10
+# a : 11
+
+# Time Complexity:
+# Sorting the list of nodes takes :𝑂(𝑁log𝑁)
+# Building the tree by repeatedly merging nodes takes :𝑂(𝑁)
+
+# Space Complexity:O(N)
